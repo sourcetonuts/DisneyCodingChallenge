@@ -21,9 +21,18 @@
     </Page.Resources>
     
     <Grid>
-        <Image Source="http://mlb.mlb.com/mlb/images/devices/ballpark/1920x1080/1.jpg" Stretch="Fill" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <Image Grid.RowSpan="2" Source="http://mlb.mlb.com/mlb/images/devices/ballpark/1920x1080/1.jpg" Stretch="Fill" />
 
-        <ListView ItemsSource="{Binding Scores}"
+        <CalendarDatePicker Grid.Row="0" x:Name="gamedayPicker" Header="Select Game Day" HorizontalAlignment="Center" />
+        
+        <ListView x:Name="scoresListView"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Scores}"
                   SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
                   SelectionMode="Single" 
                   IsItemClickEnabled="False"
