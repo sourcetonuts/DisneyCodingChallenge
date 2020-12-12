@@ -4,13 +4,60 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CodingChallenge"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:vm="using:CodingChallenge.ViewModels" 
+    xmlns:vc="using:CodingChallenge.ValueConverters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     >
+    <Page.DataContext>
+        <vm:TodayScoreViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
 
+        <vc:BoolToVisibilityConverter x:Key="TrueIsVisibile" TrueValue="Visible" FalseValue="Collapsed" />
+        <vc:BoolToIntConverter x:Key="BiggerIfSelected" TrueValue="150" FalseValue="100" />
+
+    </Page.Resources>
+    
     <Grid>
         <Image Source="http://mlb.mlb.com/mlb/images/devices/ballpark/1920x1080/1.jpg" Stretch="Fill" />
 
+        <ListView ItemsSource="{Binding Scores}"
+                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
+                  SelectionMode="Single" 
+                  IsItemClickEnabled="False"
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollMode="Disabled"
+                  VerticalAlignment="Center"
+                  VerticalContentAlignment="Center"
+                  Height="200"
+                  >
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ScoreViewModel">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Title}" 
+                                   Visibility="{Binding IsSelected, Converter={StaticResource TrueIsVisibile}}" 
+                                   FontSize="14" 
+                                   HorizontalAlignment="Center" />
+                        <Image Source="{Binding ImageUrl}" 
+                               Width="{Binding IsSelected, Converter={StaticResource BiggerIfSelected}}"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Subtitle}" 
+                                   Visibility="{Binding IsSelected, Converter={StaticResource TrueIsVisibile}}" 
+                                   FontSize="12" 
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>
