@@ -1,15 +1,18 @@
 ﻿using CodingChallenge.Services;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CodingChallenge.ViewModels
 {
     public class TodayScoreViewModel
         : ViewModelBase
     {
+        ScoresService _serviceScores = new ScoresService();
+
         public TodayScoreViewModel()
         {
-            LoadScores();
         }
 
         ObservableCollection<ScoreViewModel> _scores = new ObservableCollection<ScoreViewModel>();
@@ -36,19 +39,20 @@ namespace CodingChallenge.ViewModels
             set { SetProperty(ref _isbusy, value); }
         }
 
-        public void LoadScores(int year = 2016, int month = 5, int day = 20)
+        List<ScoreViewModel> _apiscores;
+
+        public async Task<List<ScoreViewModel>> LoadScores(int year, int month, int day)
         {
             IsBusy = true;
-            var serviceScores = new ScoresService();
-
-            //Task.Run(() =>
-            //{
-            var scores = serviceScores.LoadScoresAsync(year, month, day);
             Scores.Clear();
-            scores.ForEach(score => Scores.Add(score));
-            //});
+            await Task.Run(() =>
+               _apiscores = _serviceScores.LoadScoresAsync(year, month, day)
+            ).ConfigureAwait(true);
 
+            _apiscores.ForEach(score => Scores.Add(score));
             SelectedGame = Scores.FirstOrDefault();
+            IsBusy = false;
+            return _apiscores;
         }
 
         void UpdateSelectedStatus()
